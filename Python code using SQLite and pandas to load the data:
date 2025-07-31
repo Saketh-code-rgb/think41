@@ -1,0 +1,14 @@
+import sqlite3
+import pandas as pd
+
+# Connect to SQLite database (creates if doesn't exist)
+conn = sqlite3.connect('ecommerce.db')
+
+# Read the CSV file
+products_df = pd.read_csv('products.csv')
+
+# Write data to SQLite table
+products_df.to_sql('products', conn, if_exists='replace', index=False)
+
+# Close connection
+conn.close()
