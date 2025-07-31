@@ -1,0 +1,11 @@
+CREATE TABLE products (
+    id INT PRIMARY KEY,
+    cost DECIMAL(10, 2),
+    category VARCHAR(255),
+    name VARCHAR(255),
+    brand VARCHAR(255),
+    retail_price DECIMAL(10, 2),
+    department VARCHAR(255),
+    sku VARCHAR(255),
+    distribution_center_id INT
+);
