@@ -1,0 +1,16 @@
+-- Add department_id column
+ALTER TABLE products ADD COLUMN department_id INTEGER;
+
+-- Set foreign key relationship
+UPDATE products p
+SET department_id = d.id
+FROM departments d
+WHERE p.department = d.name;
+
+-- Add foreign key constraint
+ALTER TABLE products 
+ADD CONSTRAINT fk_department
+FOREIGN KEY (department_id) REFERENCES departments(id);
+
+-- Drop old department column (after verifying data)
+ALTER TABLE products DROP COLUMN department;
