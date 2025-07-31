@@ -1,0 +1,18 @@
+CREATE TABLE products (
+    product_id VARCHAR(50) PRIMARY KEY,
+    product_name VARCHAR(255) NOT NULL,
+    product_category VARCHAR(100),
+    product_price DECIMAL(10,2) NOT NULL,
+    product_rating DECIMAL(3,2),
+    product_stock INT NOT NULL,
+    product_brand VARCHAR(100),
+    product_description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CHECK (product_price >= 0),
+    CHECK (product_stock >= 0),
+    CHECK (product_rating BETWEEN 0 AND 5)
+);
+
+CREATE INDEX idx_category ON products(product_category);
+CREATE INDEX idx_brand ON products(product_brand);
