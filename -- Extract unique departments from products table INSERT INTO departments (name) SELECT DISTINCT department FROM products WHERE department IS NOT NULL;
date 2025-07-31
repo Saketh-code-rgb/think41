@@ -1,0 +1,4 @@
+-- Extract unique departments from products table
+INSERT INTO departments (name)
+SELECT DISTINCT department FROM products
+WHERE department IS NOT NULL;
