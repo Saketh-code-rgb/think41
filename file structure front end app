@@ -1,0 +1,11 @@
+src/
+├── components/
+│   ├── ProductList.js
+│   ├── ProductDetail.js
+│   ├── Navbar.js
+│   └── LoadingSpinner.js
+├── services/
+│   └── api.js
+├── App.js
+├── App.css
+└── index.js
