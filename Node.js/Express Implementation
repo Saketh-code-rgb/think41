@@ -1,0 +1,105 @@
+// server.js
+const express = require('express');
+const mysql = require('mysql2/promise');
+const cors = require('cors');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// Database connection pool
+const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'your_username',
+    password: 'your_password',
+    database: 'your_database',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
+
+// GET /api/products - List all products with pagination
+app.get('/api/products', async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        const [products] = await pool.query(
+            'SELECT * FROM products LIMIT ? OFFSET ?',
+            [limit, offset]
+        );
+
+        const [total] = await pool.query('SELECT COUNT(*) as count FROM products');
+        const totalCount = total[0].count;
+        const totalPages = Math.ceil(totalCount / limit);
+
+        res.json({
+            success: true,
+            data: products,
+            pagination: {
+                page,
+                limit,
+                totalCount,
+                totalPages
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
+    }
+});
+
+// GET /api/products/{id} - Get a specific product by ID
+app.get('/api/products/:id', async (req, res) => {
+    try {
+        const productId = req.params.id;
+        
+        if (isNaN(productId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid product ID'
+            });
+        }
+
+        const [products] = await pool.query(
+            'SELECT * FROM products WHERE id = ?',
+            [productId]
+        );
+
+        if (products.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            data: products[0]
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
+    }
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        success: false,
+        message: 'Something went wrong!'
+    });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
